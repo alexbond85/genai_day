@@ -1,0 +1,71 @@
+/* Hide ALL icons next to messages - more aggressive selectors */
+.cl-message-icon,
+.cl-message-icon svg,
+.cl-message svg,
+.cl-message-container svg,
+[class*="message-icon"],
+[class*="MessageIcon"],
+.cl-avatar-container,
+.cl-message .cl-message-actions svg,
+div[class*="cl-message"] svg {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+/* Target the avatar specifically */
+.cl-avatar,
+.cl-avatar-container,
+.cl-message .cl-avatar {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Hide the "Built with Chainlit" footer - more aggressive */
+.cl-footer,
+footer,
+[class*="footer"],
+div[class*="Footer"],
+[class*="chainlit-footer"],
+div[class*="ChainlitFooter"],
+div[role="contentinfo"],
+div:has(> span:contains("Built with")),
+div:has(> a[href*="chainlit.io"]),
+.watermark,
+a.watermark[href*="chainlit.io"],
+#root
+  > div.group\/sidebar-wrapper.flex.min-h-svh.w-full.has-\[\[data-variant\=inset\]\]\:bg-sidebar
+  > div
+  > div
+  > div.h-full.w-full.data-\[panel-group-direction\=vertical\]\:flex-col.flex.flex-row.flex-grow
+  > div
+  > div
+  > div
+  > div.flex.flex-col.mx-auto.w-full.p-4.pt-0
+  > div
+  > a {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Hide specific elements containing Chainlit references */
+[class*="chainlit"],
+[class*="Chainlit"],
+img[src*="chainlit"],
+svg[class*="chainlit"],
+div:has(> svg[class*="chainlit"]) {
+  display: none !important;
+}
+
+/* Hide Assistant Avatar */
+/* .ai-message > span:first-child {
+    display: none !important;
+} */
+
+/* Extra: Remove any potential padding/margin added for icons */
+.cl-message-container {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
