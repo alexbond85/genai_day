@@ -1,0 +1,2 @@
+chainlit==0.7.700
+python-dotenv==1.0.0 
