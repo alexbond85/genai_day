@@ -40,6 +40,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --platform managed \
   --allow-unauthenticated \
   --port=8000 \
+  --service-account=chainlit-bq-reader@sandbox-shippeo-hackathon-cc0a.iam.gserviceaccount.com \
   --project ${PROJECT_ID}
 
 echo "--- Deployment complete! ---"

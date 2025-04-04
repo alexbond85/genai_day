@@ -1,4 +1,5 @@
 import chainlit as cl
+from toolbox.bq_service import BigQueryService
 
 
 @cl.set_chat_profiles
@@ -14,20 +15,26 @@ async def chat_profile():
 async def start():
     """
     This function is called when a new chat session starts.
-    It sends a welcome message to the user.
+    It sends a welcome message including the list of accessible BigQuery tables.
     """
-    # Set up the avatars for the user and the assistant - Removing calls again
-    # await Avatar(
-    #     name="Assistant", 
-    #     path="/assistant.png", # Try path relative to web root
-    # ).send()
-    # await Avatar(
-    #     name="User", 
-    #     path="/user.png", # Try path relative to web root
-    # ).send()
+    # Initialize the BigQuery service
+    bq_service = BigQueryService()
     
+    # Get the list of accessible tables
+    accessible_tables = bq_service.list_accessible_tables()
+    
+    # Format the list for display
+    if accessible_tables:
+        if accessible_tables[0].startswith("Error") or accessible_tables[0] == "No accessible tables found.":
+            tables_list_str = f"\n*Note: {accessible_tables[0]}*"
+        else:
+            tables_list_str = "\n\nHere are the accessible BigQuery tables:\n" + "\n".join([f"- `{table}`" for table in accessible_tables])
+    else:
+        # Should not happen based on current bq_service logic, but handle defensively
+        tables_list_str = "\n*Could not retrieve table list.*"
+
     await cl.Message(
-        content="👋 Hello! I'm your AI assistant. How can I help you today?"
+        content=f"👋 Hello! I'm your AI assistant. How can I help you today?{tables_list_str}"
     ).send()
 
 @cl.on_message
