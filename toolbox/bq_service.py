@@ -112,6 +112,7 @@ class BigQueryService:
 
     def _initialize_bq_client(self) -> Optional[bigquery.Client]:
         """Create and return a BigQuery client with appropriate credentials."""
+        print("DEBUG: Attempting to initialize BigQuery client...")
         target_scopes = ['https://www.googleapis.com/auth/cloud-platform']
         credentials = self._credentials(target_scopes)
         
@@ -155,13 +156,18 @@ class BigQueryService:
 
     def list_accessible_tables(self) -> List[str]:
         """List all accessible table IDs (project.dataset.table)."""
+        print("DEBUG: list_accessible_tables called.")
         if not self.client:
+            print("DEBUG: BQ client not initialized in list_accessible_tables.")
             return ["Error: BigQuery client not initialized."]
 
         try:
+            print("DEBUG: Calling _collect_accessible_tables...")
             accessible_tables = self._collect_accessible_tables()
+            print(f"DEBUG: _collect_accessible_tables returned: {accessible_tables}")
             
             if not accessible_tables:
+                print("DEBUG: No accessible tables found.")
                 return ["No accessible tables found."]
                 
             return accessible_tables
@@ -171,13 +177,21 @@ class BigQueryService:
 
     def _collect_accessible_tables(self) -> List[str]:
         """Collect all accessible tables across projects and datasets."""
+        print("DEBUG: _collect_accessible_tables started.")
         accessible_tables = []
-        projects = list(self.client.list_projects())
-        
+        try:
+            projects = list(self.client.list_projects())
+            print(f"DEBUG: Found projects: {[p.project_id for p in projects]}")
+        except Exception as e:
+            print(f"DEBUG: Error listing projects: {e}")
+            projects = []
+
         for project in projects:
+            print(f"DEBUG: Processing project: {project.project_id}")
             project_tables = self._tables_for_project(project.project_id)
             accessible_tables.extend(project_tables)
             
+        print(f"DEBUG: _collect_accessible_tables finished. Found {len(accessible_tables)} tables total.")
         return accessible_tables
 
     def _tables_for_project(self, project_id: str) -> List[str]:
@@ -185,6 +199,7 @@ class BigQueryService:
         project_tables = []
         try:
             datasets = list(self.client.list_datasets(project_id))
+            print(f"DEBUG: Found datasets in {project_id}: {[d.dataset_id for d in datasets]}")
             for dataset in datasets:
                 dataset_tables = self._tables_for_dataset(project_id, dataset.dataset_id)
                 project_tables.extend(dataset_tables)
@@ -195,9 +210,11 @@ class BigQueryService:
 
     def _tables_for_dataset(self, project_id: str, dataset_id: str) -> List[str]:
         """Get all accessible tables for a specific dataset."""
+        print(f"DEBUG: Listing tables for {project_id}.{dataset_id}...")
         dataset_tables = []
         try:
             tables = list(self.client.list_tables(f"{project_id}.{dataset_id}"))
+            print(f"DEBUG: Found tables in {project_id}.{dataset_id}: {dataset_tables}")
             for table in tables:
                 dataset_tables.append(f"{project_id}.{dataset_id}.{table.table_id}")
         except Exception as e:
