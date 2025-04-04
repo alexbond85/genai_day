@@ -1,6 +1,5 @@
 from typing import Dict
 from google.cloud import bigquery
-from google.api_core import exceptions
 import os
 from dotenv import load_dotenv
 
